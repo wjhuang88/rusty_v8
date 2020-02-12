@@ -149,8 +149,10 @@ impl<T> Drop for Global<T> {
       {
         // This global handle is associated with an Isolate that has already
         // been disposed.
+        eprintln!("Global::drop() -> Isolate disposed");
       }
       addr @ Some(_) => unsafe {
+        eprintln!("Global::drop() -> Isolate live");
         // Destroy the storage cell that contains the contents of this Global.
         v8__Global__Reset__0(
           &mut *(addr as *mut Option<NonNull<T>> as *mut *mut Value),
