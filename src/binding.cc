@@ -732,6 +732,11 @@ v8::Context* v8__Object__CreationContext(v8::Object& self) {
   return local_to_ptr(self.CreationContext());
 }
 
+// add by wj.huang
+v8::Array* v8__Object__GetOwnPropertyNames(v8::Object& self, v8::Local<v8::Context> context) {
+  return maybe_local_to_ptr(self.GetOwnPropertyNames(context));
+}
+
 v8::Array* v8__Array__New(v8::Isolate* isolate, int length) {
   return local_to_ptr(v8::Array::New(isolate, length));
 }

@@ -65,6 +65,12 @@ extern "C" {
   fn v8__Object__GetIdentityHash(object: &Object) -> int;
   fn v8__Object__CreationContext(object: &Object) -> *mut Context;
 
+  // add by wj.huang
+  fn v8__Object__GetOwnPropertyNames(
+    object: &Object,
+    context: Local<Context>,
+  ) -> *mut Array;
+
   fn v8__Array__New(isolate: *mut Isolate, length: int) -> *mut Array;
   fn v8__Array__New_with_elements(
     isolate: *mut Isolate,
@@ -212,6 +218,18 @@ impl Object {
   ) -> Local<'a, Context> {
     unsafe {
       let ptr = v8__Object__CreationContext(self);
+      scope.to_local(ptr).unwrap()
+    }
+  }
+
+  // add by wj.huang
+  pub fn get_own_property_names<'a>(
+    &self,
+    scope: &mut impl ToLocal<'a>,
+    context: Local<Context>,
+  ) -> Local<'a, Array> {
+    unsafe {
+      let ptr = v8__Object__GetOwnPropertyNames(self, context);
       scope.to_local(ptr).unwrap()
     }
   }
