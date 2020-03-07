@@ -5,7 +5,6 @@ use crate::data::ObjectTemplate;
 use crate::data::Template;
 use crate::isolate::Isolate;
 use crate::support::MapFnTo;
-use crate::Context;
 use crate::Function;
 use crate::FunctionCallback;
 use crate::Local;
@@ -14,6 +13,7 @@ use crate::PropertyAttribute;
 use crate::String;
 use crate::ToLocal;
 use crate::NONE;
+use crate::{AccessorNameGetterCallback, Context};
 
 extern "C" {
   fn v8__Template__Set(
@@ -44,6 +44,12 @@ extern "C" {
     self_: &ObjectTemplate,
     context: *mut Context,
   ) -> *mut Object;
+  // add by wj.huang
+  fn v8__ObjectTemplate__SetAccessor(
+    self_: &ObjectTemplate,
+    name: Local<String>,
+    getter: AccessorNameGetterCallback,
+  );
 }
 
 impl Template {
@@ -121,5 +127,14 @@ impl ObjectTemplate {
   ) -> Option<Local<'a, Object>> {
     let ptr = unsafe { v8__ObjectTemplate__NewInstance(self, &mut *context) };
     unsafe { scope.to_local(ptr) }
+  }
+
+  // add by wj.huang
+  pub fn set_accessor(
+    &mut self,
+    name: Local<String>,
+    getter: impl for<'s> MapFnTo<AccessorNameGetterCallback<'s>>,
+  ) {
+    unsafe { v8__ObjectTemplate__SetAccessor(self, name, getter.map_fn_to()) }
   }
 }

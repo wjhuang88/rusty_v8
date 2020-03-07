@@ -665,6 +665,11 @@ v8::Object* v8__ObjectTemplate__NewInstance(v8::ObjectTemplate& self,
   return maybe_local_to_ptr(self.NewInstance(context));
 }
 
+// add by wj.huang
+void v8__ObjectTemplate__SetAccessor(v8::ObjectTemplate& self, v8::Local<v8::String> name, v8::AccessorGetterCallback getter) {
+    self.SetAccessor(name, getter);
+}
+
 v8::Object* v8__Object__New(v8::Isolate* isolate) {
   return local_to_ptr(v8::Object::New(isolate));
 }
